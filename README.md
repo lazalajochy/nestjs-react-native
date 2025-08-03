@@ -726,3 +726,81 @@ Uso variables de estado como loading, error, y data.
 
 * End-to-End (E2E): uso Detox para simular interacciones reales en un dispositivo/emulador.
 
+---
+## ¿Qué es un DTO?
+
+DTO significa Data Transfer Object
+
+Es un objeto que define la forma de los datos que se envían o reciben en una solicitud HTTP (por ejemplo, en un POST, PUT, etc.).
+
+ En NestJS y otros frameworks, los DTOs son clases que permiten:
+
+* Validar datos (con decoradores como @IsString(), @IsEmail(), etc.)
+
+* Transformar datos (usando class-transformer)
+
+* Organizar claramente lo que el cliente puede o debe enviar
+
+```js  
+  import { IsString, IsEmail } from 'class-validator';
+
+  export class CreateUserDto {
+    @IsString()
+    name: string;
+
+    @IsEmail()
+    email: string;
+  }
+```
+
+Este DTO asegura que el name sea un string y el email tenga formato válido.
+
+Se usa así en un controlador:
+
+```js
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+
+```
+
+## ¿Qué es una interfaz (interface)?
+
+Una interfaz en TypeScript se usa para definir la forma de un objeto, pero no tiene funcionalidades como validación ni transformación.
+
+Sirve para definir estructuras, especialmente cuando se trata de:
+
+* Tipar respuestas
+
+* Tipar modelos internos
+
+* Reutilizar estructuras entre módulos
+
+```js
+  export interface User {
+    id: number;
+    name: string;
+    email: string;
+  }
+
+```
+
+Diferencias entre DTO vs Interfaz
+
+| Característica            | DTO (clase)                    | Interface                                  |
+| ------------------------- | ------------------------------ | ------------------------------------------ |
+| Tipo de estructura        | Clase                          | Interface                                  |
+| Validación de datos       | ✅ Sí, usando `class-validator` | ❌ No                                       |
+| Transformación de datos   | ✅ Sí, con `class-transformer`  | ❌ No                                       |
+| Se transpila a JS         | ✅ Sí                           | ❌ No, solo existe en tiempo de compilación |
+| Uso común                 | Datos de entrada/salida HTTP   | Tipado interno, respuestas, modelos        |
+| Compatible con decorators | ✅ Sí                           | ❌ No                                       |
+
+
+# ¿Cuándo usar cada uno?
+
+Usa DTOs (clases) cuando recibas datos del usuario (por ejemplo, en un @Body() de NestJS) y necesites validar o transformar esos datos.
+
+Usa interfaces para tipar objetos internos, como respuestas de base de datos, contratos entre servicios, o tipos que no necesitan validación.
+
